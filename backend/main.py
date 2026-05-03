@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -6,9 +8,15 @@ from services.database import init_db
 
 app = FastAPI(title="Construction Cost Intelligence Platform API", version="1.0.0")
 
+frontend_url = os.getenv("FRONTEND_URL")
+allowed_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+if frontend_url:
+    allowed_origins.append(frontend_url.rstrip("/"))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"https://.*\.onrender\.com",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
